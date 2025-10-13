@@ -14,7 +14,6 @@ import {
 } from "./handlers/index.js"
 import { handleInputErrors } from "./middleware/validation.js"
 import { requireAuth, requireGuest } from "./middleware/auth.js"
-import Task from "./models/Tasks.js"
 
 const router = Router()
 
@@ -25,7 +24,7 @@ const router = Router()
 
 /**
  * User registration.
- * @name POST /auth/register
+ * @name POST /api/users/register
  * @function
  * @memberof module:Router
  * @param {string} firstName - User's first name (minimum 2, maximum 50 characters).
@@ -35,7 +34,7 @@ const router = Router()
  * @param {string} password - Password with at least 8 characters, including uppercase, lowercase, and number.
  */
 router.post(
-    "/auth/register",
+    "/api/users/register",
     requireGuest,
     body("firstName")
         .notEmpty().withMessage("El nombre es obligatorio")
@@ -58,14 +57,14 @@ router.post(
 
 /**
  * User login.
- * @name POST /auth/login
+ * @name POST /api/auth/login
  * @function
  * @memberof module:Router
  * @param {string} email - Valid email address.
  * @param {string} password - Password with at least 8 characters.
  */
 router.post(
-    "/auth/login",
+    "/api/auth/login",
     body("email").isEmail().withMessage("El email no es válido").normalizeEmail(),
     body("password").isLength({ min: 8 }).withMessage("La contraseña debe tener mínimo 8 caracteres"),
     handleInputErrors,
@@ -74,129 +73,40 @@ router.post(
 
 /**
  * Logout user.
- * @name POST /auth/logout
+ * @name POST /api/auth/logout
  * @function
  * @memberof module:Router
  */
 router.post(
-    "/auth/logout",
+    "/api/auth/logout",
     requireAuth,
     logoutUser
 )
 
 /**
  *  Get the currently authenticated user.
- * @name GET /auth/user
+ * @name GET /api/auth/user
  * @function
  * @memberof module:Router
  */
 router.get(
-    "/auth/user",
+    "/api/auth/user",
     requireAuth,
     getCurrentUser
 )
 
 /**
  * Verify if the token is valid.
- * @name GET /auth/verify
+ * @name GET /api/auth/verify
  * @function
  * @memberof module:Router
  */
 router.get(
-    "/auth/verify",
+    "/api/auth/verify",
     requireAuth,
     verifyAuth
 )
 
-/**
- * Example protected route: Dashboard.
- * @name GET /mainDashBoard.html
- * @function
- * @memberof module:Router
- */
-router.get(
-    "/mainDashBoard.html",
-    requireAuth,
-    (req, res) => {
-        res.status(200).json({
-            message: `Hola, ${req.user.firstName}`,
-            user: {
-                id: req.user.id,
-                firstName: req.user.firstName,
-                lastName: req.user.lastName,
-                email: req.user.email,
-                age: req.user.age,
-                
-            }
-        })
-    }
-)
 
-/**
- * Password recovery.
- * @name POST /forgot-password
- * @function
- * @memberof module:Router
- * @param {string} email - Valid email address.
- */
-router.post(
-    "/forgot-password",
-    body("email").isEmail().withMessage("El email no es válido"),
-    handleInputErrors,
-    forgotPassword
-)
-
-/**
- * Password recovery.
- * @name POST /reset-password
- * @function
- * @memberof module:Router
- * @param {string} password - Valid password.
- * @param {string} confirmPassword - Valid password.
- */
-
-router.post(
-    "/reset-password",
-    body("password").isLength({ min: 8 }).withMessage("La contraseña debe tener mínimo 8 caracteres"),
-    body("confirm-password").isLength({ min: 8 }).withMessage("La contraseña debe tener mínimo 8 caracteres"),
-    handleInputErrors,
-    resetPassword
-)
-
-router.get(
-    "/get-user-by-id",
-    requireAuth,
-    getUserById
-)
-
-router.patch(
-    "/auth/user",
-    requireAuth,
-    body("firstName").optional(),
-    body("lastName").optional(),
-    body("email").isEmail().withMessage("Email inválido").normalizeEmail(),
-    body("age").optional().isInt({ min: 13, max: 120 }).withMessage("Edad inválida").toInt(),
-    body("password").optional().isLength({ min: 8 }).withMessage("La contraseña debe tener mínimo 8 caracteres"),
-    body("createdAt").optional().isISO8601().toDate(),
-    handleInputErrors,
-    updateUser
-)
-
-/**
- * Eliminar cuenta del usuario autenticado (requiere contraseña en body).
- * @name DELETE /auth/user
- */
-router.delete(
-    "/auth/user",
-    requireAuth,
-    body("password").notEmpty().withMessage("La contraseña es obligatoria"),
-    handleInputErrors,
-    deleteUserAccount
-)
-
-// // ============================================
-// 📋 TASK MANAGEMENT ROUTES
-// ============================================
-// Task routes are handled in task.routes.js
 
 export default router

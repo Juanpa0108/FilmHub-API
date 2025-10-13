@@ -1,10 +1,9 @@
 import express from 'express'
 import cors from 'cors'
 import router from './router.js'
-import taskRoutes from './task.routes.js'
+import movieRoutes from './movie.routes.js'
 import 'dotenv/config'
 import { connectDB } from './config/db.js'
-// import { verifyEmailTransport } from './config/nodemailer.js'
 import { corsConfig } from './config/cors.js'
 import cookieParser from 'cookie-parser'
 
@@ -19,7 +18,6 @@ const app = express()
  * @function
  */
 connectDB()
-// verifyEmailTransport()
 
 /**
  * CORS middleware with the configuration defined in corsConfig.
@@ -42,9 +40,9 @@ app.use(cookieParser())
 app.use('/', router)
 
 /**
- * Task router.
+ * Movie routes.
  */
-app.use('/', taskRoutes)
+app.use('/', movieRoutes)
 
 /**
  * Global error handling middleware.

@@ -1,7 +1,7 @@
 {
-  "name": "taskslow",
+  "name": "flimhub-backend",
   "version": "1.0.0",
-  "description": "Proyecto Integrador - Backend",
+  "description": "FlimHub - Plataforma de Películas - Backend",
   "license": "ISC",
   "author": "",
   "type": "module",
@@ -11,7 +11,8 @@
     "docs": "jsdoc -c src/jsdoc.json",
     "build": "echo 'No build step required'",
     "start": "node src/index.js",
-    "dev:api": "nodemon src/index.js --api"
+    "dev:api": "nodemon src/index.js --api",
+    "seed": "node src/scripts/seedMovies.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

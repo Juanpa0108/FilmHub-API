@@ -1,5 +1,4 @@
 import User from "../models/User.js";
-import Task from "../models/Tasks.js";
 import { hashPassword, checkPassword, generateToken } from "../utils/auths.js";
 import { AuthEmail } from "../emails/AuthEmail.js";
 
@@ -345,8 +344,7 @@ export const deleteUserAccount = async (req, res) => {
       return res.status(401).json({ error: "Contraseña incorrecta" });
     }
 
-    // Borrar tareas del usuario
-    await Task.deleteMany({ user: user._id });
+    // Aquí podrías agregar lógica para eliminar datos relacionados del usuario
 
     // Borrar usuario
     await User.findByIdAndDelete(user._id);
