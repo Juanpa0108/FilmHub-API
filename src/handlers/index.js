@@ -13,11 +13,9 @@ import { AuthEmail } from "../emails/AuthEmail.js";
  */
 export const createAccount = async (req, res) => {
   try {
-    const { email, password, age } = req.body;
+    const { email, password  } = req.body;
 
-    if (age <= 13) {
-      return res.status(403).json({ error: "Debes ser mayor de 13 años para registrarte" });
-    }
+
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -34,12 +32,9 @@ export const createAccount = async (req, res) => {
       user: {
         id: user.id,
         firstName: user.firstName,
-        lastName: user.lastName,
         email: user.email,
-        age: user.age,
         createdAt: user.createdAt
-      },
-      redirect: "/login.html"
+      }
     });
   } catch (error) {
     console.error(error);
@@ -102,33 +97,6 @@ export const loginUser = async (req, res) => {
 };
 
 /**
- * User logout.
- *
- * @async
- * @function logoutUser
- * @param {Request} req - HTTP request object
- * @param {Response} res - HTTP response object
- * @returns {Promise<void>}
- */
-export const logoutUser = async (req, res) => {
-  try {
-    res.clearCookie("authToken", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict"
-    });
-
-    res.status(200).json({
-      message: "Sesión cerrada correctamente",
-      redirect: "/index.html"
-    });
-  } catch (error) {
-    console.error("Error en logoutUser:", error);
-    res.status(500).json({ error: "Error al cerrar sesión" });
-  }
-};
-
-/**
  * Obtiene el usuario actual autenticado.
  *
  * @async
@@ -173,9 +141,7 @@ export const verifyAuth = async (req, res) => {
       user: {
         id: req.user.id,
         firstName: req.user.firstName,
-        lastName: req.user.lastName,
-        email: req.user.email,
-        age: req.user.age
+        email: req.user.email
       }
     });
   } catch (error) {

@@ -1,9 +1,3 @@
-import mongoose from 'mongoose'
-import dotenv from 'dotenv'
-import Movie from '../models/Movie.js'
-
-dotenv.config()
-
 const sampleMovies = [
   {
     title: "El Padrino",
@@ -146,49 +140,5 @@ const sampleMovies = [
     trailer: "https://www.youtube.com/watch?v=qSqVVswa420"
   }
 ]
-
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/flimhub')
-    console.log('✅ Conectado a MongoDB')
-  } catch (error) {
-    console.error('❌ Error conectando a MongoDB:', error)
-    process.exit(1)
-  }
-}
-
-const seedMovies = async () => {
-  try {
-    await connectDB()
-    
-    // Limpiar películas existentes
-    await Movie.deleteMany({})
-    console.log('🗑️  Películas existentes eliminadas')
-    
-    // Insertar películas de ejemplo
-    const movies = await Movie.insertMany(sampleMovies)
-    console.log(`✅ ${movies.length} películas insertadas exitosamente`)
-    
-    // Mostrar estadísticas
-    const genres = await Movie.distinct('genre')
-    console.log(`📊 Géneros disponibles: ${genres.join(', ')}`)
-    
-    const avgRating = await Movie.aggregate([
-      { $group: { _id: null, avgRating: { $avg: '$rating' } } }
-    ])
-    console.log(`⭐ Rating promedio: ${avgRating[0]?.avgRating?.toFixed(1) || 'N/A'}`)
-    
-  } catch (error) {
-    console.error('❌ Error sembrando películas:', error)
-  } finally {
-    await mongoose.disconnect()
-    console.log('👋 Desconectado de MongoDB')
-  }
-}
-
-// Ejecutar solo si es llamado directamente
-if (import.meta.url === `file://${process.argv[1]}`) {
-  seedMovies()
-}
 
 export default seedMovies

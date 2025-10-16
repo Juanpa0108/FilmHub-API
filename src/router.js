@@ -3,14 +3,8 @@ import { body } from "express-validator"
 import { 
     createAccount, 
     loginUser, 
-    logoutUser, 
     getCurrentUser,
-    verifyAuth,
-    forgotPassword,
-    resetPassword,
-    getUserById,
-    updateUser,
-    deleteUserAccount
+    verifyAuth
 } from "./handlers/index.js"
 import { handleInputErrors } from "./middleware/validation.js"
 import { requireAuth, requireGuest } from "./middleware/auth.js"
@@ -28,9 +22,7 @@ const router = Router()
  * @function
  * @memberof module:Router
  * @param {string} firstName - User's first name (minimum 2, maximum 50 characters).
- * @param {string} lastName - User's last name (minimum 2, maximum 50 characters).
  * @param {string} email - Valid email address.
- * @param {number} age - User's age (between 12 and 120).
  * @param {string} password - Password with at least 8 characters, including uppercase, lowercase, and number.
  */
 router.post(
@@ -39,15 +31,9 @@ router.post(
     body("firstName")
         .notEmpty().withMessage("El nombre es obligatorio")
         .trim().isLength({ min: 2, max: 50 }).withMessage("El nombre debe tener entre 2 y 50 caracteres"),
-    body("lastName")
-        .notEmpty().withMessage("El apellido es obligatorio")
-        .trim().isLength({ min: 2, max: 50 }).withMessage("El apellido debe tener entre 2 y 50 caracteres"),
-    body("email")
+   body("email")
         .isEmail().withMessage("El email no es válido")
         .normalizeEmail(),
-    body("age")
-        .isInt({ min: 12, max: 120 }).withMessage("La edad debe estar entre 12 y 120 años")
-        .toInt(),
     body("password")
         .isLength({ min: 8 }).withMessage("La contraseña debe tener mínimo 8 caracteres")
         .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage("La contraseña debe contener al menos: una mayúscula, una minúscula y un número"),
@@ -69,18 +55,6 @@ router.post(
     body("password").isLength({ min: 8 }).withMessage("La contraseña debe tener mínimo 8 caracteres"),
     handleInputErrors,
     loginUser
-)
-
-/**
- * Logout user.
- * @name POST /api/auth/logout
- * @function
- * @memberof module:Router
- */
-router.post(
-    "/api/auth/logout",
-    requireAuth,
-    logoutUser
 )
 
 /**
@@ -106,7 +80,5 @@ router.get(
     requireAuth,
     verifyAuth
 )
-
-
 
 export default router
