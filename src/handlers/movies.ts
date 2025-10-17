@@ -76,7 +76,7 @@ export const getMovieById = async (req: Request, res: Response): Promise<void | 
   try {
     const { id } = req.params
 
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
       return res.status(400).json({ error: 'Invalid movie ID' })
     }
 

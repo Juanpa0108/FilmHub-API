@@ -68,6 +68,13 @@ router.post(
         .notEmpty().withMessage('First name is required')
         .trim()
         .isLength({ min: 2, max: 50 }).withMessage('First name must be between 2 and 50 characters'),
+    body('lastName')
+        .notEmpty().withMessage('Last name is required')
+        .trim()
+        .isLength({ min: 2, max: 50 }).withMessage('Last name must be between 2 and 50 characters'),
+    body('age')
+        .notEmpty().withMessage('Age is required')
+        .isInt({ min: 13 }).withMessage('User must be at least 13 years old'),
     body('email')
         .isEmail().withMessage('Invalid email address')
         .normalizeEmail(),

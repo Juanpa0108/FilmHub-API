@@ -7,11 +7,12 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "dev": "nodemon --exec tsx src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev:api": "nodemon src/index.ts --api",
-    "docs": "typedoc --out docs src"
+    "dev:api": "nodemon --exec tsx src/index.ts --api",
+    "seed": "tsx src/scripts/seedMovies.ts",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -40,8 +41,7 @@
     "@types/node": "^20.11.0",
     "@types/nodemailer": "^6.4.14",
     "nodemon": "^3.1.9",
-    "ts-node": "^10.9.2",
-    "typedoc": "^0.25.7",
+    "tsx": "^4.20.6",
     "typescript": "^5.3.3"
   }
 }

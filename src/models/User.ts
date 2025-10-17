@@ -10,6 +10,10 @@ import mongoose, { Schema, Model, HydratedDocument } from 'mongoose'
 export interface IUser {
     /** User's first name */
     firstName: string
+
+    lastName: string
+
+    age: number
     
     /** User's email address (unique, lowercase) */
     email: string
@@ -103,6 +107,18 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
         trim: true,
         minlength: [2, 'First name must be at least 2 characters'],
         maxlength: [50, 'First name cannot exceed 50 characters']
+    },
+    lastName: {
+        type: String,
+        required: [true, 'Last name is required'],
+        trim: true,
+        minlength: [2, 'Last name must be at least 2 characters'],
+        maxlength: [50, 'Last name cannot exceed 50 characters']
+    },
+    age: {
+        type: Number,
+        required: [true, 'Age is required'],
+        min: [13, 'User must be at least 13 years old']
     },
     email: {
         type: String,
