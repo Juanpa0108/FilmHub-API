@@ -13,6 +13,16 @@ const userSchema = new Schema({
         required: true,
         trim: true
     },
+    lastName: {
+        type: String,
+        required: false,
+        trim: true
+    },
+    age: {
+        type: Number,
+        required: false,
+        min: 0
+    },
     email: {
         type: String,
         required: true,

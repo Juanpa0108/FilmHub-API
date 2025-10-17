@@ -4,7 +4,9 @@ import {
     createAccount, 
     loginUser, 
     getCurrentUser,
-    verifyAuth
+    verifyAuth,
+    updateUser,
+    changePassword
 } from "./handlers/index.js"
 import { handleInputErrors } from "./middleware/validation.js"
 import { requireAuth, requireGuest } from "./middleware/auth.js"
@@ -67,6 +69,28 @@ router.get(
     "/api/auth/user",
     requireAuth,
     getCurrentUser
+)
+
+/**
+ * Update the authenticated user's profile.
+ * @name PUT /api/auth/user
+ * @function
+ * @memberof module:Router
+ */
+router.put(
+    "/api/auth/user",
+    requireAuth,
+    updateUser
+)
+
+/**
+ * Change password for authenticated user
+ * @name POST /api/auth/change-password
+ */
+router.post(
+    "/api/auth/change-password",
+    requireAuth,
+    changePassword
 )
 
 /**
