@@ -1,4 +1,4 @@
-import express, { Application, Request, Response, NextFunction } from 'express'
+import express, { Application, Request, Response } from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import 'dotenv/config'
@@ -81,18 +81,6 @@ app.use('/', router)
  */
 app.use('/', movieRoutes)
 
-/**
- * Custom error interface extending the standard Error object.
- * 
- * @interface CustomError
- * @extends {Error}
- */
-interface CustomError extends Error {
-    /** The name/type of the error (e.g., 'JsonWebTokenError', 'TokenExpiredError') */
-    name: string
-    /** Human-readable error message */
-    message: string
-}
 
 /**
  * Global error handling middleware.
@@ -130,25 +118,7 @@ interface CustomError extends Error {
  * // Generic error in production
  * // Returns: 500 { error: 'Internal server error' }
  */
-app.use((err: CustomError, req: Request, res: Response, next: NextFunction): void => {
-    console.error('Error:', err)
-    
-    if (err.name === 'JsonWebTokenError') {
-        res.status(401).json({ error: 'Invalid token' })
-        return
-    }
-    
-    if (err.name === 'TokenExpiredError') {
-        res.status(401).json({ error: 'Token expired' })
-        return
-    }
-    
-    res.status(500).json({ 
-        error: process.env.NODE_ENV === 'development' 
-            ? err.message 
-            : 'Internal server error' 
-    })
-})
+
 
 /**
  * 404 Not Found handler for undefined routes.
@@ -167,8 +137,9 @@ app.use((err: CustomError, req: Request, res: Response, next: NextFunction): voi
  * // Request to /api/nonexistent
  * // Returns: 404 { error: 'Route not found' }
  */
-app.use('*', (req: Request, res: Response): void => {
-    res.status(404).json({ error: 'Route not found' })
+app.all('*', (req: Request, res: Response): void => {
+    // Using req prevents TS6133 (unused parameter) and gives a more helpful message
+    res.status(404).json({ error: `Route not found: ${req.originalUrl}` })
 })
 
 export default app

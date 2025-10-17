@@ -172,7 +172,7 @@ export const getMoviesByGenre = async (req: Request, res: Response): Promise<voi
  * @param {Response} res - HTTP response object
  * @returns {Promise<void>}
  */
-export const getGenres = async (req: Request, res: Response): Promise<void | Response> => {
+export const getGenres = async (_req: Request, res: Response): Promise<void | Response> => {
   try {
     const genres = await Movie.distinct('genre', { isActive: true })
     
