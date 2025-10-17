@@ -18,11 +18,15 @@ import { CorsOptions } from 'cors'
  */
 export const corsConfig: CorsOptions = {
   origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void): void {
+    // Helper to normalize origins (remove trailing slash)
+    const normalize = (s: string) => s.replace(/\/+$/, '')
+
     // Gather allowed origins from env (single) and list (comma-separated)
-    const envOrigins = [
+    const envOriginsRaw = [
       process.env.FRONTEND_URL || '',
       ...(process.env.FRONTEND_URLS ? process.env.FRONTEND_URLS.split(',') : [])
     ].map(o => o.trim()).filter(Boolean)
+    const envOrigins = envOriginsRaw.map(normalize)
 
     // Local dev defaults
     const localOrigins = ['http://localhost:5173', 'http://localhost:5174']
@@ -33,11 +37,19 @@ export const corsConfig: CorsOptions = {
     // Helper for wildcard vercel domains if explicitly enabled
     const allowVercelWildcard = process.env.ALLOW_VERCEL_WILDCARD === 'true'
 
-    const all = new Set<string>([...envOrigins, ...localOrigins])
+    // Build a set including both normalized and trailing-slash variants
+    const all = new Set<string>([
+      ...envOrigins.flatMap(o => [o, `${o}/`]),
+      ...localOrigins.flatMap(o => [o, `${o}/`])
+    ])
+
+    const allowUndefinedOrigin = process.env.ALLOW_UNDEFINED_ORIGIN === 'true' || allowUndefined
 
     const isAllowed = (ori: string | undefined): boolean => {
-      if (!ori) return allowUndefined
+      if (!ori) return allowUndefinedOrigin
       if (all.has(ori)) return true
+      const nori = normalize(ori)
+      if (all.has(nori)) return true
       if (allowVercelWildcard) {
         try {
           const u = new URL(ori)
