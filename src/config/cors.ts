@@ -69,4 +69,6 @@ export const corsConfig: CorsOptions = {
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  // Some clients expect 204 for successful preflight
+  optionsSuccessStatus: 204,
 }
