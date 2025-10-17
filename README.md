@@ -1,6 +1,6 @@
 # FlimHub Backend API
 
-Backend API para la plataforma de películas FlimHub desarrollado con Node.js, Express y MongoDB.
+Backend API para la plataforma de películas FlimHub desarrollado con Node.js, Express, TypeScript y MongoDB.
 
 ## 🚀 Características
 
@@ -59,12 +59,18 @@ PORT=4000
 npm run seed
 ```
 
-5. **Iniciar el servidor**
+5. **Compilar TypeScript (opcional para desarrollo)**
 ```bash
-# Desarrollo
+npm run build
+```
+
+6. **Iniciar el servidor**
+```bash
+# Desarrollo (con ts-node)
 npm run dev
 
-# Producción
+# Producción (requiere compilación previa)
+npm run build
 npm start
 ```
 
@@ -180,10 +186,11 @@ Authorization: Bearer <token>
 
 ## 🔧 Scripts Disponibles
 
-- `npm run dev` - Inicia el servidor en modo desarrollo con nodemon
-- `npm start` - Inicia el servidor en modo producción
+- `npm run dev` - Inicia el servidor en modo desarrollo con nodemon y ts-node
+- `npm run build` - Compila TypeScript a JavaScript
+- `npm start` - Inicia el servidor en modo producción (requiere compilación)
 - `npm run seed` - Pobla la base de datos con películas de ejemplo
-- `npm run docs` - Genera documentación JSDoc
+- `npm run docs` - Genera documentación TypeDoc
 
 ## 🏗️ Estructura del Proyecto
 
@@ -197,10 +204,11 @@ src/
 ├── utils/           # Utilidades (auth, etc.)
 ├── emails/          # Templates de email
 ├── interfaces/      # Interfaces TypeScript
-├── router.js        # Rutas principales
-├── movie.routes.js  # Rutas de películas
-├── server.js        # Configuración del servidor
-└── index.js         # Punto de entrada
+├── types/           # Tipos globales de TypeScript
+├── router.ts        # Rutas principales
+├── movie.routes.ts  # Rutas de películas
+├── server.ts        # Configuración del servidor
+└── index.ts         # Punto de entrada
 ```
 
 ## 🔒 Seguridad
@@ -223,12 +231,13 @@ Para desplegar en producción:
 
 ## 📝 Notas de Desarrollo
 
-- El proyecto usa ES6 modules
-- MongoDB con Mongoose ODM
+- El proyecto usa TypeScript con ES6 modules
+- MongoDB con Mongoose ODM y tipos TypeScript
 - Validaciones tanto frontend como backend
 - Manejo de errores centralizado
 - Logs estructurados
-- Documentación JSDoc completa
+- Documentación TypeDoc completa
+- Tipos estrictos para mejor desarrollo
 
 ## 🤝 Contribución
 

@@ -4,7 +4,9 @@ import {
     createAccount, 
     loginUser, 
     getCurrentUser,
-    verifyAuth
+    verifyAuth,
+    updateUser,
+    changePassword
 } from './handlers/index'
 import { handleInputErrors } from './middleware/validation'
 import { requireAuth, requireGuest } from './middleware/auth'
@@ -46,6 +48,8 @@ const router: Router = Router()
  * 
  * @param {Object} req.body - Request body
  * @param {string} req.body.firstName - User's first name
+ * @param {string} req.body.lastName - User's last name
+ * @param {number} req.body.age - User's age
  * @param {string} req.body.email - User's email address
  * @param {string} req.body.password - User's password
  * 
@@ -57,6 +61,8 @@ const router: Router = Router()
  * // Request body
  * {
  *   "firstName": "John",
+ *   "lastName": "Doe",
+ *   "age": 25,
  *   "email": "john@example.com",
  *   "password": "SecurePass123"
  * }
@@ -68,9 +74,16 @@ router.post(
         .notEmpty().withMessage('First name is required')
         .trim()
         .isLength({ min: 2, max: 50 }).withMessage('First name must be between 2 and 50 characters'),
+    body('lastName')
+        .notEmpty().withMessage('Last name is required')
+        .trim()
+        .isLength({ min: 2, max: 50 }).withMessage('Last name must be between 2 and 50 characters'),
     body('email')
         .isEmail().withMessage('Invalid email address')
         .normalizeEmail(),
+    body('age')
+        .isInt({ min: 12, max: 120 }).withMessage('Age must be between 12 and 120 years')
+        .toInt(),
     body('password')
         .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
         .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Password must contain at least one uppercase letter, one lowercase letter, and one number'),
@@ -183,6 +196,87 @@ router.get(
     '/api/auth/verify',
     requireAuth,
     verifyAuth
+)
+
+/**
+ * Update authenticated user profile endpoint.
+ * 
+ * Updates the profile information of the currently authenticated user.
+ * Only updates fields that are provided in the request body.
+ * 
+ * **Middleware Chain:**
+ * 1. `requireAuth` - Verifies JWT token and attaches user to request
+ * 2. `updateUser` - Updates user profile data
+ * 
+ * @route PUT /api/auth/user
+ * @access Private (requires authentication)
+ * 
+ * @param {Object} req.body - Request body with fields to update
+ * @param {string} [req.body.firstName] - User's first name
+ * @param {string} [req.body.lastName] - User's last name
+ * @param {number} [req.body.age] - User's age
+ * @param {string} [req.body.email] - User's email address
+ * 
+ * @returns {Object} 200 - Successfully updated user profile
+ * @returns {Object} 400 - Validation errors or email already exists
+ * @returns {Object} 401 - Unauthorized (invalid or missing token)
+ * @returns {Object} 404 - User not found
+ * 
+ * @example
+ * // Request body
+ * {
+ *   "firstName": "John Updated",
+ *   "lastName": "Doe Updated",
+ *   "age": 26,
+ *   "email": "john.updated@example.com"
+ * }
+ */
+router.put(
+    '/api/auth/user',
+    requireAuth,
+    updateUser
+)
+
+/**
+ * Change password endpoint.
+ * 
+ * Allows authenticated users to change their password.
+ * Requires current password for verification and validates new password.
+ * 
+ * **Validation Rules:**
+ * - `currentPassword`: Required, must match user's current password
+ * - `newPassword`: Required, minimum 8 characters, must contain uppercase, lowercase, and number
+ * - `confirmNewPassword`: Required, must match newPassword
+ * 
+ * **Middleware Chain:**
+ * 1. `requireAuth` - Verifies JWT token and attaches user to request
+ * 2. `changePassword` - Validates current password and updates to new password
+ * 
+ * @route POST /api/auth/change-password
+ * @access Private (requires authentication)
+ * 
+ * @param {Object} req.body - Request body
+ * @param {string} req.body.currentPassword - User's current password
+ * @param {string} req.body.newPassword - New password
+ * @param {string} req.body.confirmNewPassword - Confirmation of new password
+ * 
+ * @returns {Object} 200 - Password successfully changed
+ * @returns {Object} 400 - Validation errors or passwords don't match
+ * @returns {Object} 401 - Unauthorized or current password incorrect
+ * @returns {Object} 404 - User not found
+ * 
+ * @example
+ * // Request body
+ * {
+ *   "currentPassword": "OldPassword123",
+ *   "newPassword": "NewPassword123",
+ *   "confirmNewPassword": "NewPassword123"
+ * }
+ */
+router.post(
+    '/api/auth/change-password',
+    requireAuth,
+    changePassword
 )
 
 export default router

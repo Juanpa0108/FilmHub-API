@@ -11,6 +11,12 @@ export interface IUser {
     /** User's first name */
     firstName: string
     
+    /** User's last name */
+    lastName: string
+    
+    /** User's age */
+    age: number
+    
     /** User's email address (unique, lowercase) */
     email: string
     
@@ -103,6 +109,19 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
         trim: true,
         minlength: [2, 'First name must be at least 2 characters'],
         maxlength: [50, 'First name cannot exceed 50 characters']
+    },
+    lastName: {
+        type: String,
+        required: [true, 'Last name is required'],
+        trim: true,
+        minlength: [2, 'Last name must be at least 2 characters'],
+        maxlength: [50, 'Last name cannot exceed 50 characters']
+    },
+    age: {
+        type: Number,
+        required: [true, 'Age is required'],
+        min: [12, 'Age must be at least 12'],
+        max: [120, 'Age cannot exceed 120']
     },
     email: {
         type: String,
