@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
-import User from '../models/User'
-import { hashPassword, checkPassword, generateToken } from '../utils/auths'
-import { AuthEmail } from '../emails/AuthEmail'
+import User from '../models/User.js'
+import { hashPassword, checkPassword, generateToken } from '../utils/auths.js'
+import { AuthEmail } from '../emails/AuthEmail.js'
 
 /**
  * Creates a new user account.

@@ -1,5 +1,5 @@
 import colors from 'colors'
-import app from './server'
+import app from './server.js'
 
 /**
  * Server port configuration.

@@ -1,4 +1,4 @@
-import { transport } from '../config/nodemailer'
+import { transport } from '../config/nodemailer.js'
 
 /**
  * User information interface for email sending.

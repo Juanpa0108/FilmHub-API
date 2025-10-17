@@ -5,9 +5,9 @@ import {
     loginUser, 
     getCurrentUser,
     verifyAuth
-} from './handlers/index'
-import { handleInputErrors } from './middleware/validation'
-import { requireAuth, requireGuest } from './middleware/auth'
+} from './handlers/index.js'
+import { handleInputErrors } from './middleware/validation.js'
+import { requireAuth, requireGuest } from './middleware/auth.js'
 
 /**
  * Express Router instance for authentication and user management routes.
