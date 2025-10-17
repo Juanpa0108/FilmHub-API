@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { body, ValidationChain } from 'express-validator'
+import { body } from 'express-validator'
 import { 
     createAccount, 
     loginUser, 
