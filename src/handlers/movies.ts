@@ -1,4 +1,5 @@
-import Movie from "../models/Movie.js"
+import { Request, Response } from 'express'
+import Movie from '../models/Movie'
 
 /**
  * Get all movies with pagination and filtering.
@@ -9,17 +10,17 @@ import Movie from "../models/Movie.js"
  * @param {Response} res - HTTP response object
  * @returns {Promise<void>}
  */
-export const getMovies = async (req, res) => {
+export const getMovies = async (req: Request, res: Response): Promise<void | Response> => {
   try {
-    const page = parseInt(req.query.page) || 1
-    const limit = parseInt(req.query.limit) || 12
-    const genre = req.query.genre
-    const search = req.query.search
-    const sortBy = req.query.sortBy || 'createdAt'
+    const page = parseInt(req.query.page as string) || 1
+    const limit = parseInt(req.query.limit as string) || 12
+    const genre = req.query.genre as string
+    const search = req.query.search as string
+    const sortBy = (req.query.sortBy as string) || 'createdAt'
     const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1
 
-    // Construir filtros
-    const filters = { isActive: true }
+    // Build filters
+    const filters: any = { isActive: true }
     
     if (genre) {
       filters.genre = { $in: [genre] }
@@ -29,8 +30,8 @@ export const getMovies = async (req, res) => {
       filters.$text = { $search: search }
     }
 
-    // Construir ordenamiento
-    const sort = {}
+    // Build sort
+    const sort: any = {}
     sort[sortBy] = sortOrder
 
     const skip = (page - 1) * limit
@@ -57,8 +58,8 @@ export const getMovies = async (req, res) => {
       }
     })
   } catch (error) {
-    console.error("Error en getMovies:", error)
-    res.status(500).json({ error: "Error al obtener las películas" })
+    console.error('Error in getMovies:', error)
+    res.status(500).json({ error: 'Error fetching movies' })
   }
 }
 
@@ -71,24 +72,24 @@ export const getMovies = async (req, res) => {
  * @param {Response} res - HTTP response object
  * @returns {Promise<void>}
  */
-export const getMovieById = async (req, res) => {
+export const getMovieById = async (req: Request, res: Response): Promise<void | Response> => {
   try {
     const { id } = req.params
 
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(400).json({ error: "ID de película inválido" })
+      return res.status(400).json({ error: 'Invalid movie ID' })
     }
 
     const movie = await Movie.findOne({ _id: id, isActive: true })
 
     if (!movie) {
-      return res.status(404).json({ error: "Película no encontrada" })
+      return res.status(404).json({ error: 'Movie not found' })
     }
 
     res.status(200).json({ movie })
   } catch (error) {
-    console.error("Error en getMovieById:", error)
-    res.status(500).json({ error: "Error al obtener la película" })
+    console.error('Error in getMovieById:', error)
+    res.status(500).json({ error: 'Error fetching movie' })
   }
 }
 
@@ -101,9 +102,9 @@ export const getMovieById = async (req, res) => {
  * @param {Response} res - HTTP response object
  * @returns {Promise<void>}
  */
-export const getFeaturedMovies = async (req, res) => {
+export const getFeaturedMovies = async (req: Request, res: Response): Promise<void | Response> => {
   try {
-    const limit = parseInt(req.query.limit) || 6
+    const limit = parseInt(req.query.limit as string) || 6
 
     const movies = await Movie.find({ isActive: true, rating: { $gte: 7 } })
       .sort({ rating: -1, createdAt: -1 })
@@ -112,8 +113,8 @@ export const getFeaturedMovies = async (req, res) => {
 
     res.status(200).json({ movies })
   } catch (error) {
-    console.error("Error en getFeaturedMovies:", error)
-    res.status(500).json({ error: "Error al obtener películas destacadas" })
+    console.error('Error in getFeaturedMovies:', error)
+    res.status(500).json({ error: 'Error fetching featured movies' })
   }
 }
 
@@ -126,11 +127,11 @@ export const getFeaturedMovies = async (req, res) => {
  * @param {Response} res - HTTP response object
  * @returns {Promise<void>}
  */
-export const getMoviesByGenre = async (req, res) => {
+export const getMoviesByGenre = async (req: Request, res: Response): Promise<void | Response> => {
   try {
     const { genre } = req.params
-    const page = parseInt(req.query.page) || 1
-    const limit = parseInt(req.query.limit) || 12
+    const page = parseInt(req.query.page as string) || 1
+    const limit = parseInt(req.query.limit as string) || 12
 
     const skip = (page - 1) * limit
 
@@ -157,8 +158,8 @@ export const getMoviesByGenre = async (req, res) => {
       }
     })
   } catch (error) {
-    console.error("Error en getMoviesByGenre:", error)
-    res.status(500).json({ error: "Error al obtener películas por género" })
+    console.error('Error in getMoviesByGenre:', error)
+    res.status(500).json({ error: 'Error fetching movies by genre' })
   }
 }
 
@@ -171,13 +172,13 @@ export const getMoviesByGenre = async (req, res) => {
  * @param {Response} res - HTTP response object
  * @returns {Promise<void>}
  */
-export const getGenres = async (req, res) => {
+export const getGenres = async (req: Request, res: Response): Promise<void | Response> => {
   try {
     const genres = await Movie.distinct('genre', { isActive: true })
     
     res.status(200).json({ genres })
   } catch (error) {
-    console.error("Error en getGenres:", error)
-    res.status(500).json({ error: "Error al obtener géneros" })
+    console.error('Error in getGenres:', error)
+    res.status(500).json({ error: 'Error fetching genres' })
   }
 }
