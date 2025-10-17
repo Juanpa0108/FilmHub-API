@@ -2,10 +2,10 @@ import express, { Application, Request, Response, NextFunction } from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import 'dotenv/config'
-import router from './router'
-import movieRoutes from './movie.routes'
-import { connectDB } from './config/db'
-import { corsConfig } from './config/cors'
+import router from './router.js'
+import movieRoutes from './movie.routes.js'
+import { connectDB } from './config/db.js'
+import { corsConfig } from './config/cors.js'
 
 /**
  * Main instance of the Express application.
@@ -101,12 +101,12 @@ interface CustomError extends Error {
  * Provides specific handling for JWT-related errors and returns appropriate
  * HTTP status codes and error messages.
  * 
- * **Error Types Handled:**
- * - `JsonWebTokenError`: Invalid JWT token format or signature
- * - `TokenExpiredError`: JWT token has expired
+ * *Error Types Handled:*
+ * - JsonWebTokenError: Invalid JWT token format or signature
+ * - TokenExpiredError: JWT token has expired
  * - Generic errors: All other unhandled errors
  * 
- * **Environment-Specific Behavior:**
+ * *Environment-Specific Behavior:*
  * - Development: Returns detailed error messages for debugging
  * - Production: Returns generic error messages to avoid exposing sensitive information
  * 
