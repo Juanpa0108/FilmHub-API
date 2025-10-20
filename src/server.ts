@@ -40,6 +40,8 @@ connectDB()
  * @see {@link corsConfig} for allowed origins and methods
  */
 app.use(cors(corsConfig))
+// Handle preflight requests globally to avoid 404 on OPTIONS
+app.options('*', cors(corsConfig))
 
 /**
  * JSON body parser middleware.

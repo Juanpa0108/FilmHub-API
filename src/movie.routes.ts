@@ -5,8 +5,8 @@ import {
     getFeaturedMovies, 
     getMoviesByGenre,
     getGenres 
-} from './handlers/movies'
-import { requireAuth } from './middleware/auth'
+} from './handlers/movies.js'
+import { requireAuth } from './middleware/auth.js'
 
 /**
  * Express Router instance for movie-related endpoints.

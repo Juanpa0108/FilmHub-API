@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import { verifyToken } from '../utils/auths'
-import User, { UserDocument } from '../models/User'
+import { verifyToken } from '../utils/auths.js'
+import User, { UserDocument } from '../models/User.js'
 
 /**
  * Extend Express Request to include authenticated user.

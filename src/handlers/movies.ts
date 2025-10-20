@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import Movie from '../models/Movie'
+import Movie from '../models/Movie.js'
 
 /**
  * Get all movies with pagination and filtering.

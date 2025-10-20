@@ -4,10 +4,12 @@ import {
     createAccount, 
     loginUser, 
     getCurrentUser,
-    verifyAuth
-} from './handlers/index'
-import { handleInputErrors } from './middleware/validation'
-import { requireAuth, requireGuest } from './middleware/auth'
+    verifyAuth,
+    updateUser,
+    changePassword
+} from './handlers/index.js'
+import { handleInputErrors } from './middleware/validation.js'
+import { requireAuth, requireGuest } from './middleware/auth.js'
 
 /**
  * Express Router instance for authentication and user management routes.
@@ -161,6 +163,17 @@ router.get(
 )
 
 /**
+ * Update current authenticated user.
+ * @route PUT /api/auth/user
+ * @access Private
+ */
+router.put(
+    '/api/auth/user',
+    requireAuth,
+    updateUser
+)
+
+/**
  * Token verification endpoint.
  * 
  * Verifies if the provided JWT token is valid and not expired.
@@ -190,6 +203,17 @@ router.get(
     '/api/auth/verify',
     requireAuth,
     verifyAuth
+)
+
+/**
+ * Change current user's password.
+ * @route POST /api/auth/change-password
+ * @access Private
+ */
+router.post(
+    '/api/auth/change-password',
+    requireAuth,
+    changePassword
 )
 
 export default router
