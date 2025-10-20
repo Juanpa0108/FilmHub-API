@@ -83,6 +83,22 @@ app.use('/', router)
  */
 app.use('/', movieRoutes)
 
+/**
+ * Lightweight health check endpoint.
+ * Useful for uptime monitoring and to warm up cold starts in hosting providers.
+ */
+app.get('/health', (_req: Request, res: Response): void => {
+    // Report basic DB readiness from mongoose
+    const dbReady = ((): boolean => {
+        try {
+            // lazy require to avoid direct import cycles
+            const mongoose = require('mongoose') as typeof import('mongoose')
+            return mongoose.connection.readyState === 1 // connected
+        } catch { return false }
+    })()
+    res.status(200).json({ ok: true, uptime: process.uptime(), dbReady })
+})
+
 
 /**
  * Global error handling middleware.

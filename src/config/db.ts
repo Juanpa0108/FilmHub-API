@@ -14,7 +14,12 @@ import colors from 'colors'
  */
 export const connectDB = async (): Promise<void> => {
     try { 
-        const { connection } = await mongoose.connect(process.env.MONGO_URI || '')
+        const { connection } = await mongoose.connect(process.env.MONGO_URI || '', {
+            // Fail fast if Atlas/DB is unreachable to avoid long hangs
+            serverSelectionTimeoutMS: 5000, // 5s to pick a server
+            socketTimeoutMS: 45000, // 45s for long operations
+            maxPoolSize: 10,
+        } as any)
         const url = `${connection.host}:${connection.port}`
         console.log(colors.cyan.bold(`MongoDB Connected at ${url}`))
     } catch (error: any) {

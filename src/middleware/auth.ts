@@ -23,6 +23,14 @@ declare global {
  */
 export const authenticate = async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
     try {
+        // Short-circuit if DB is not connected to avoid long stalls
+        try {
+            const mongoose = require('mongoose') as typeof import('mongoose')
+            if (mongoose.connection.readyState !== 1) {
+                return res.status(503).json({ error: 'Service Unavailable: database not connected' })
+            }
+        } catch {}
+
         const bearer = req.headers.authorization
 
         if (!bearer) {
