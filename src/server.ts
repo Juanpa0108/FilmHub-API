@@ -83,6 +83,14 @@ app.use('/', router)
  */
 app.use('/', movieRoutes)
 
+/**
+ * Lightweight health check endpoint.
+ * Useful for uptime monitoring and to warm up cold starts in hosting providers.
+ */
+app.get('/health', (_req: Request, res: Response): void => {
+    res.status(200).json({ ok: true, uptime: process.uptime() })
+})
+
 
 /**
  * Global error handling middleware.
