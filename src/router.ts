@@ -5,8 +5,9 @@ import {
     loginUser, 
     getCurrentUser,
     verifyAuth,
-    updateUser,
-    changePassword
+    updateUser,  
+    forgotPassword,
+    resetPassword,
 } from './handlers/index.js'
 import { handleInputErrors } from './middleware/validation.js'
 import { requireAuth, requireGuest } from './middleware/auth.js'
@@ -206,14 +207,34 @@ router.get(
 )
 
 /**
- * Change current user's password.
- * @route POST /api/auth/change-password
- * @access Private
+ * Password recovery.
+ * @name POST /forgot-password
+ * @function
+ * @memberof module:Router
+ * @param {string} email - Valid email address.
  */
 router.post(
-    '/api/auth/change-password',
-    requireAuth,
-    changePassword
+    "/forgot-password",
+    body("email").isEmail().withMessage("El email no es válido"),
+    handleInputErrors,
+    forgotPassword
+)
+
+/**
+ * Password recovery.
+ * @name POST /reset-password
+ * @function
+ * @memberof module:Router
+ * @param {string} password - Valid password.
+ * @param {string} confirmPassword - Valid password.
+ */
+
+router.post(
+    "/reset-password",
+    body("password"),
+    body("confirm-password"),
+    handleInputErrors,
+    resetPassword
 )
 
 export default router
