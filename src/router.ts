@@ -6,6 +6,8 @@ import {
     getCurrentUser,
     verifyAuth,
     updateUser,  
+    changePassword,
+    deleteUserAccount,
     forgotPassword,
     resetPassword,
 } from './handlers/index.js'
@@ -175,6 +177,17 @@ router.put(
 )
 
 /**
+ * Change password for authenticated user.
+ * @route POST /api/auth/change-password
+ * @access Private
+ */
+router.post(
+    '/api/auth/change-password',
+    requireAuth,
+    changePassword
+)
+
+/**
  * Token verification endpoint.
  * 
  * Verifies if the provided JWT token is valid and not expired.
@@ -204,6 +217,17 @@ router.get(
     '/api/auth/verify',
     requireAuth,
     verifyAuth
+)
+
+/**
+ * Delete the authenticated user's account (requires password in body).
+ * @route DELETE /api/auth/user
+ * @access Private
+ */
+router.delete(
+    '/api/auth/user',
+    requireAuth,
+    deleteUserAccount
 )
 
 /**

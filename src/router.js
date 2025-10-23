@@ -6,7 +6,8 @@ import {
     getCurrentUser,
     verifyAuth,
     updateUser,
-    changePassword
+    changePassword,
+    deleteUserAccount
 } from "./handlers/index.js"
 import { handleInputErrors } from "./middleware/validation.js"
 import { requireAuth, requireGuest } from "./middleware/auth.js"
@@ -91,6 +92,16 @@ router.post(
     "/api/auth/change-password",
     requireAuth,
     changePassword
+)
+
+/**
+ * Delete the authenticated user's account (requires password confirmation in body)
+ * @name DELETE /api/auth/user
+ */
+router.delete(
+    "/api/auth/user",
+    requireAuth,
+    deleteUserAccount
 )
 
 /**
