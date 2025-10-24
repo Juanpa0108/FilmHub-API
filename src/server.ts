@@ -3,6 +3,8 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import 'dotenv/config'
 import router from './router.js'
+import mongoose from 'mongoose'
+import { fixReviewIndexes } from './models/Review.js'
 import movieRoutes from './movie.routes.js'
 import { connectDB } from './config/db.js'
 import { corsConfig } from './config/cors.js'
@@ -29,6 +31,11 @@ const app: Application = express()
  * @returns {Promise<void>}
  */
 connectDB()
+
+// Once DB is connected, run a one-time fixer to drop obsolete indexes
+mongoose.connection.on('connected', () => {
+    fixReviewIndexes().catch(() => {})
+})
 
 /**
  * CORS (Cross-Origin Resource Sharing) middleware configuration.

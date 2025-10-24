@@ -31,21 +31,21 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
             }
         } catch {}
 
+        // Accept Authorization Bearer header OR authToken cookie (fallback)
         const bearer = req.headers.authorization
-
-        if (!bearer) {
-            const error = new Error('Unauthorized')
-            return res.status(401).json({ error: error.message })
+        let token: string | undefined
+        if (bearer?.startsWith('Bearer ')) {
+            token = bearer.split(' ')[1]
+        } else if (req.cookies?.authToken) {
+            token = req.cookies.authToken
         }
-
-        const [, token] = bearer.split(' ')
 
         if (!token) {
             const error = new Error('Unauthorized')
             return res.status(401).json({ error: error.message })
         }
 
-        const result = verifyToken(token)
+    const result = verifyToken(token)
         if (typeof result === 'object' && result.id) {
             const user = await User.findById(result.id).select('-password')
             if (!user) {

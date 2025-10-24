@@ -13,6 +13,8 @@ import {
 } from './handlers/index.js'
 import { handleInputErrors } from './middleware/validation.js'
 import { requireAuth, requireGuest } from './middleware/auth.js'
+import { createReview, listMyReviews, listByMovie, validateCreateReview, deleteReview, deleteReviewValidators, updateReview, updateReviewValidators } from './handlers/reviews.js'
+import { addFavorite, listMyFavorites as listFavs, removeFavorite, validateAddFavorite, removeFavoriteValidators } from './handlers/favorites.js'
 
 /**
  * Express Router instance for authentication and user management routes.
@@ -262,3 +264,15 @@ router.post(
 )
 
 export default router
+
+// Reviews API
+router.post('/api/reviews', requireAuth, validateCreateReview, createReview)
+router.get('/api/reviews/me', requireAuth, listMyReviews)
+router.get('/api/reviews', listByMovie)
+router.delete('/api/reviews/:id', requireAuth, deleteReviewValidators, deleteReview)
+router.patch('/api/reviews/:id', requireAuth, updateReviewValidators, updateReview)
+
+// Favorites API
+router.get('/api/favorites/me', requireAuth, listFavs)
+router.post('/api/favorites', requireAuth, validateAddFavorite, addFavorite)
+router.delete('/api/favorites/:movieId', requireAuth, removeFavoriteValidators, removeFavorite)
