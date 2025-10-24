@@ -2,6 +2,17 @@ import { Request, Response } from 'express'
 import { body, param, validationResult } from 'express-validator'
 import Review from '../models/Review.js'
 
+/**
+ * Validation rules for creating a new movie review.
+ * 
+ * Ensures all required fields are provided with proper validation:
+ * - movieId: Required string
+ * - movieTitle: Optional string
+ * - rating: Integer between 1-5
+ * - text: String between 1-1000 characters
+ * 
+ * @constant {Array} validateCreateReview
+ */
 export const validateCreateReview = [
   body('movieId').notEmpty().withMessage('movieId is required').isString(),
   body('movieTitle').optional().isString(),
@@ -9,6 +20,18 @@ export const validateCreateReview = [
   body('text').isString().isLength({ min: 1, max: 1000 }).withMessage('text required'),
 ]
 
+/**
+ * Creates a new movie review for the authenticated user.
+ * 
+ * Validates input data and creates a new review entry in the database.
+ * Includes defensive payload sanitization and MongoDB ObjectId validation.
+ * 
+ * @async
+ * @function createReview
+ * @param {Request} req - Express request object containing review data
+ * @param {Response} res - Express response object
+ * @returns {Promise<Response>} JSON response with created review or error
+ */
 export const createReview = async (req: Request, res: Response) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
@@ -40,6 +63,18 @@ export const createReview = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ * Retrieves all reviews created by the authenticated user.
+ * 
+ * Returns a list of all reviews that the user has written,
+ * sorted by creation date (newest first).
+ * 
+ * @async
+ * @function listMyReviews
+ * @param {Request} req - Express request object containing user info
+ * @param {Response} res - Express response object
+ * @returns {Promise<Response>} JSON response with reviews array or error
+ */
 export const listMyReviews = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id
@@ -53,6 +88,18 @@ export const listMyReviews = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ * Retrieves all reviews for a specific movie.
+ * 
+ * Returns a list of all reviews written for the specified movie,
+ * sorted by creation date (newest first).
+ * 
+ * @async
+ * @function listByMovie
+ * @param {Request} req - Express request object containing movieId query parameter
+ * @param {Response} res - Express response object
+ * @returns {Promise<Response>} JSON response with reviews array or error
+ */
 export const listByMovie = async (req: Request, res: Response) => {
   try {
     const { movieId } = req.query
@@ -66,10 +113,29 @@ export const listByMovie = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ * Validation rules for deleting a review.
+ * 
+ * Ensures that the review ID parameter is provided in the URL.
+ * 
+ * @constant {Array} deleteReviewValidators
+ */
 export const deleteReviewValidators = [
   param('id').isString().isLength({ min: 1 }).withMessage('review id required')
 ]
 
+/**
+ * Deletes a review created by the authenticated user.
+ * 
+ * Verifies that the review exists and belongs to the authenticated user
+ * before allowing deletion. Returns 403 if user doesn't own the review.
+ * 
+ * @async
+ * @function deleteReview
+ * @param {Request} req - Express request object containing user info and review ID param
+ * @param {Response} res - Express response object
+ * @returns {Promise<Response>} JSON response with success status or error
+ */
 export const deleteReview = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id
@@ -88,12 +154,34 @@ export const deleteReview = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ * Validation rules for updating a review.
+ * 
+ * Ensures that the review ID is provided and optional fields are valid:
+ * - id: Required string parameter
+ * - text: Optional string between 1-1000 characters
+ * - rating: Optional integer between 1-5
+ * 
+ * @constant {Array} updateReviewValidators
+ */
 export const updateReviewValidators = [
   param('id').isString().isLength({ min: 1 }).withMessage('review id required'),
   body('text').optional().isString().isLength({ min: 1, max: 1000 }).withMessage('text 1-1000'),
   body('rating').optional().isInt({ min: 1, max: 5 }).withMessage('rating 1-5'),
 ]
 
+/**
+ * Updates a review created by the authenticated user.
+ * 
+ * Verifies that the review exists and belongs to the authenticated user
+ * before allowing updates. Only updates provided fields (text and/or rating).
+ * 
+ * @async
+ * @function updateReview
+ * @param {Request} req - Express request object containing user info, review ID param, and update data
+ * @param {Response} res - Express response object
+ * @returns {Promise<Response>} JSON response with updated review or error
+ */
 export const updateReview = async (req: Request, res: Response) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
