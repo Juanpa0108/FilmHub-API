@@ -205,7 +205,7 @@ export const resetPassword = async (req: Request, res: Response): Promise<void |
   const { password, confirmPassword } = req.body
   const { id } = req.query
 
-  if (password !== confirmPassword) {
+  if (password != confirmPassword) {
     return res.status(400).json({ error: 'Passwords do not match' })
   }
 
@@ -213,7 +213,6 @@ export const resetPassword = async (req: Request, res: Response): Promise<void |
   if (!user) {
     return res.status(404).json({ error: 'User not found' })
   }
-
   user.password = await hashPassword(password)
   await user.save()
   res.json({ msg: 'Password updated successfully' })
@@ -349,37 +348,20 @@ export const deleteUserAccount = async (req: Request, res: Response): Promise<vo
  * @function changePassword
  * @param {Object} req - HTTP request object
  * @param {Object} res - HTTP response object
- * @returns {Promise<void>}
+ * @returns {Promise<any>}
  */
-export const changePassword = async (req: Request, res: Response): Promise<void | Response> => {
-  try {
-    const userId = req.user?.id
-    const { currentPassword, newPassword, confirmNewPassword } = req.body || {}
+export const changePassword = async (req:Request, res:Response): Promise<any> => {
+  const {password, confirmPassword} = req.body;
+  const {id} = req.query;
 
-    if (!currentPassword || !newPassword || !confirmNewPassword) {
-      return res.status(400).json({ error: 'All password fields are required' })
-    }
-    if (newPassword !== confirmNewPassword) {
-      return res.status(400).json({ error: 'Passwords do not match' })
-    }
-    if (String(newPassword).length < 8 || !/[A-Z]/.test(newPassword) || !/[a-z]/.test(newPassword) || !/\d/.test(newPassword)) {
-      return res.status(400).json({ error: 'Password must have at least 8 chars, with uppercase, lowercase and a number' })
-    }
-
-    const user = await User.findById(userId)
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' })
-    }
-    const isValid = await checkPassword(currentPassword, user.password)
-    if (!isValid) {
-      return res.status(401).json({ error: 'Current password is incorrect' })
-    }
-
-    user.password = await hashPassword(newPassword)
-    await user.save()
-    return res.status(200).json({ message: 'Password updated successfully' })
-  } catch (error) {
-    console.error('Error in changePassword:', error)
-    return res.status(500).json({ error: 'Error updating password' })
+  if(password !== confirmPassword) {
+    return res.status(400).json({error: "Las contraseñas no coinciden"});
   }
+  const user = await User.findById(id);
+  if(!user) {
+    return res.status(404).json({error: "Usuario no encontrado"});
+  }
+  user.password = await hashPassword(password);
+  await user.save();
+  res.json({msg: "Contraseña actualizada correctamente"});
 }

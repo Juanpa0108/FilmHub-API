@@ -258,7 +258,7 @@ router.post(
 router.post(
     "/reset-password",
     body("password"),
-    body("confirm-password"),
+    body("confirmPassword"),
     handleInputErrors,
     resetPassword
 )
